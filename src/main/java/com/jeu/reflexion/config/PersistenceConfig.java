@@ -2,6 +2,7 @@ package com.jeu.reflexion.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -57,5 +58,11 @@ public class PersistenceConfig {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(emf.getObject());
         return txManager;
+    }
+
+    @Bean
+    @DependsOn("entityManagerFactory")
+    public DatabaseSchemaFixer databaseSchemaFixer(DataSource dataSource) {
+        return new DatabaseSchemaFixer(dataSource);
     }
 }

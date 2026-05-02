@@ -28,11 +28,16 @@ public class PlayerService {
         Player player = new Player();
         player.setUsername(username.trim());
         player.setPassword(password);
+        player.setBestScore(0);
+        player.setBestLevel("-");
         return playerRepo.save(player);
     }
 
     public Optional<Player> login(String username, String password) {
-        return playerRepo.findByUsername(username)
+        if (username == null || password == null) {
+            return Optional.empty();
+        }
+        return playerRepo.findByUsername(username.trim())
                 .filter(p -> p.getPassword().equals(password));
     }
 

@@ -3,15 +3,15 @@ let isLocked = false;
 let timerInterval = null;
 let seconds = 0;
 
+function formatTime(s) {
+    return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+}
+
 function startTimer() {
     timerInterval = setInterval(() => {
         seconds++;
-        const m = String(Math.floor(seconds / 60)).padStart(2, "0");
-        const s = String(seconds % 60).padStart(2, "0");
         const el = document.getElementById("timer");
-        if (el) {
-            el.textContent = m + ":" + s;
-        }
+        if (el) el.textContent = formatTime(seconds);
     }, 1000);
 }
 
@@ -44,22 +44,47 @@ function handleCardClick() {
     const i1 = document.getElementById("flip-i1");
     const i2 = document.getElementById("flip-i2");
     const form = document.getElementById("flip-form");
-    if (!i1 || !i2 || !form) {
-        return;
-    }
+    if (!i1 || !i2 || !form) return;
 
     i1.value = String(previousCard.index);
     i2.value = String(secondCard.index);
 
-    setTimeout(() => form.submit(), 250);
+    setTimeout(() => {
+        const movesEl = document.getElementById("moves");
+        sessionStorage.setItem("gameTimer", String(seconds));
+        sessionStorage.setItem("gameTimerMoves", movesEl ? movesEl.textContent.trim() : "0");
+        form.submit();
+    }, 250);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    initCards();
     const modal = document.getElementById("game-over-modal");
-    if (modal && modal.style.display !== "flex") {
-        startTimer();
-    } else if (timerInterval) {
-        clearInterval(timerInterval);
+    if (modal && modal.style.display === "flex") {
+        sessionStorage.removeItem("gameTimer");
+        sessionStorage.removeItem("gameTimerMoves");
+        return;
     }
+
+    const movesEl = document.getElementById("moves");
+    const currentMoves = movesEl ? parseInt(movesEl.textContent.trim(), 10) : 0;
+    const savedMoves   = parseInt(sessionStorage.getItem("gameTimerMoves") || "-1", 10);
+    const savedSecs    = parseInt(sessionStorage.getItem("gameTimer")      || "0",  10);
+
+    if (currentMoves === 0) {
+        seconds = 0;
+        sessionStorage.removeItem("gameTimer");
+        sessionStorage.removeItem("gameTimerMoves");
+    } else if (currentMoves === savedMoves + 1) {
+        seconds = savedSecs;
+    } else {
+        seconds = 0;
+        sessionStorage.removeItem("gameTimer");
+        sessionStorage.removeItem("gameTimerMoves");
+    }
+
+    const timerEl = document.getElementById("timer");
+    if (timerEl) timerEl.textContent = formatTime(seconds);
+
+    initCards();
+    startTimer();
 });

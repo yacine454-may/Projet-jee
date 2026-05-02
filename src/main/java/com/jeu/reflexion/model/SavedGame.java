@@ -19,8 +19,8 @@ public class SavedGame {
     private String level;
     private int moves;
 
-    @Column(name = "wrong_moves")
-    private int wrongMoves;
+    @Column(name = "wrong_moves", nullable = true)
+    private Integer wrongMoves;
 
     private int score;
 
@@ -33,6 +33,18 @@ public class SavedGame {
     @PrePersist
     @PreUpdate
     public void updateSavedAt() {
+        if (level == null || level.isBlank()) {
+            level = "EASY";
+        }
+        if (wrongMoves == null || wrongMoves < 0) {
+            wrongMoves = 0;
+        }
+        if (moves < 0) {
+            moves = 0;
+        }
+        if (score < 0) {
+            score = 0;
+        }
         this.savedAt = LocalDateTime.now();
     }
 
@@ -53,7 +65,7 @@ public class SavedGame {
     public int getMoves() { return moves; }
     public void setMoves(int moves) { this.moves = moves; }
 
-    public int getWrongMoves() { return wrongMoves; }
+    public int getWrongMoves() { return wrongMoves == null ? 0 : wrongMoves; }
     public void setWrongMoves(int wrongMoves) { this.wrongMoves = wrongMoves; }
 
     public int getScore() { return score; }

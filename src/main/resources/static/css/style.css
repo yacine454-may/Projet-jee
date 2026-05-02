@@ -396,3 +396,36 @@ a:hover { text-decoration: underline; }
 .modal-stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 .modal-stat-value { font-size: 1.6rem; font-weight: 700; color: #a78bfa; }
 .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.modal-icon-delete {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: rgba(220,38,38,.15);
+    border: 2px solid rgba(220,38,38,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.modal-icon-delete::before {
+    content: '';
+    width: 20px;
+    height: 22px;
+    border: 2px solid #fca5a5;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    position: absolute;
+    top: 16px;
+}
+.modal-icon-delete::after {
+    content: '';
+    width: 26px;
+    height: 2px;
+    background: #fca5a5;
+    border-radius: 2px;
+    position: absolute;
+    top: 12px;
+    box-shadow: -6px -4px 0 #fca5a5, 6px -4px 0 #fca5a5;
+}
