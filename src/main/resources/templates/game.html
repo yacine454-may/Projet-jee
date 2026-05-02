@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Jeu de Mémoire</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <img th:src="@{/images/card_back.svg}" alt="Logo" width="32" height="32">
+        <span>Jeu de Mémoire</span>
+    </div>
+    <div class="nav-links">
+        <span class="nav-user" th:text="${player.username}"></span>
+        <a th:href="@{/home}" class="btn btn-outline">Accueil</a>
+        <a th:href="@{/logout}" class="btn btn-danger">Déconnexion</a>
+    </div>
+</nav>
+
+<!-- Game Header -->
+<div class="game-header">
+    <div class="game-stat">
+        <span class="stat-label">Niveau</span>
+        <span class="stat-value badge"
+              th:classappend="${state.level == 'EASY'} ? ' badge-success' : (${state.level == 'MEDIUM'} ? ' badge-warning' : ' badge-danger')"
+              th:text="${state.level}"></span>
+    </div>
+    <div class="game-stat">
+        <span class="stat-label">Score</span>
+        <span id="score" class="stat-value score-value" th:text="${state.score}"></span>
+    </div>
+    <div class="game-stat">
+        <span class="stat-label">Paires</span>
+        <span class="stat-value">
+            <span id="matched-pairs" th:text="${state.matchedPairs}"></span>
+            <span th:text="'/' + ${state.totalPairs}"></span>
+        </span>
+    </div>
+    <div class="game-stat">
+        <span class="stat-label">Coups</span>
+        <span id="moves" class="stat-value" th:text="${state.totalMoves}"></span>
+    </div>
+    <div class="game-stat">
+        <span class="stat-label">Temps</span>
+        <span id="timer" class="stat-value">00:00</span>
+    </div>
+    <div class="game-actions">
+        <form th:action="@{/game/save}" method="post" style="display:inline">
+            <button id="save-btn" class="btn btn-outline" type="submit"
+                    th:disabled="${state.gameOver}">Sauvegarder</button>
+        </form>
+        <a th:href="@{/home}" class="btn btn-danger">Quitter</a>
+    </div>
+</div>
+
+<div th:if="${gameMessage}" class="alert alert-success" style="max-width:1100px;margin:16px auto 0"
+     th:text="${gameMessage}"></div>
+
+<!-- Game Grid -->
+<div class="game-area">
+    <form id="flip-form" th:action="@{/game/flip}" method="post">
+        <input type="hidden" name="i1" id="flip-i1">
+        <input type="hidden" name="i2" id="flip-i2">
+    </form>
+    <div id="game-grid"
+         class="game-grid"
+         th:classappend="' ' + ${state.level.toLowerCase()}"
+         th:attr="data-cols=${state.gridCols}">
+
+        <div th:each="card, stat : ${state.cards}"
+             class="card"
+             th:id="'card-' + ${stat.index}"
+             th:attr="data-index=${stat.index}, data-image-id=${card.imageId}"
+             th:classappend="${card.matched} ? ' flipped matched' : ''">
+            <div class="card-inner">
+                <div class="card-back">
+                    <img th:src="@{/images/card_back.svg}" alt="?">
+                </div>
+                <div class="card-front">
+                    <img th:src="${'/images/card_' + card.imageId + '.svg'}" alt="Card">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast"></div>
+
+<!-- Game Over Modal -->
+<div id="game-over-modal" class="modal-overlay"
+     th:style="${state.gameOver} ? 'display:flex' : 'display:none'">
+    <div class="modal-card">
+        <div class="modal-icon">🎉</div>
+        <h2>Félicitations !</h2>
+        <p>Vous avez trouvé toutes les paires !</p>
+        <div class="modal-stats">
+            <div class="modal-stat">
+                <span class="modal-stat-label">Score Final</span>
+                <span id="final-score" class="modal-stat-value" th:text="${state.score}"></span>
+            </div>
+            <div class="modal-stat">
+                <span class="modal-stat-label">Coups</span>
+                <span class="modal-stat-value" th:text="${state.totalMoves}"></span>
+            </div>
+            <div class="modal-stat">
+                <span class="modal-stat-label">Niveau</span>
+                <span class="modal-stat-value" th:text="${state.level}"></span>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <a th:href="@{/game/new(level=${state.level})}" class="btn btn-success">Rejouer</a>
+            <a th:href="@{/home}" class="btn btn-primary">Accueil</a>
+            <a th:href="@{/scores}" class="btn btn-outline">Classement</a>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/game.js}"></script>
+</body>
+</html>

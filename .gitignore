@@ -1,0 +1,13 @@
+target/
+.idea/
+.vscode/
+*.log
+*.tmp
+*.class
+
+# Local database files
+data/
+
+# OS files
+Thumbs.db
+desktop.ini

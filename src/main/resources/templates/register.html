@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription - Jeu de Mémoire</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <img th:src="@{/images/card_back.svg}" alt="Logo" width="60" height="60">
+            <h1>Créer un compte</h1>
+            <p>Rejoins le jeu de mémoire !</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form th:action="@{/register}" method="post">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" name="username" placeholder="Choisissez un username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" placeholder="Minimum 4 caractères" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm">Confirmer le mot de passe</label>
+                <input type="password" id="confirm" name="confirm" placeholder="Répétez le mot de passe" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">S'inscrire</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Déjà un compte ? <a th:href="@{/login}">Se connecter</a></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

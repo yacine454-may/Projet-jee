@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil - Jeu de Mémoire</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <img th:src="@{/images/card_back.svg}" alt="Logo" width="32" height="32">
+        <span>Jeu de Mémoire</span>
+    </div>
+    <div class="nav-links">
+        <span class="nav-user">Bonjour, <strong th:text="${player.username}"></strong></span>
+        <a th:href="@{/scores}" class="btn btn-outline">Classement</a>
+        <a th:href="@{/logout}" class="btn btn-danger">Déconnexion</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Level Selection -->
+    <section class="section">
+        <h2 class="section-title">Nouvelle Partie</h2>
+        <p class="section-sub">Choisissez votre niveau de difficulté</p>
+        <div class="level-cards">
+
+            <div class="level-card easy">
+                <div class="level-icon">
+                    <img th:src="@{/images/card_1.svg}" alt="Facile" width="64" height="64">
+                    <img th:src="@{/images/card_2.svg}" alt="Facile" width="64" height="64">
+                </div>
+                <h3>Facile</h3>
+                <p>4×4 — 8 paires</p>
+                <p class="level-detail">Parfait pour commencer</p>
+                <a th:href="@{/game/new(level='EASY')}" class="btn btn-success btn-full">Jouer</a>
+            </div>
+
+            <div class="level-card medium">
+                <div class="level-icon">
+                    <img th:src="@{/images/card_5.svg}" alt="Moyen" width="64" height="64">
+                    <img th:src="@{/images/card_6.svg}" alt="Moyen" width="64" height="64">
+                </div>
+                <h3>Moyen</h3>
+                <p>6×4 — 12 paires</p>
+                <p class="level-detail">Pour les joueurs intermédiaires</p>
+                <a th:href="@{/game/new(level='MEDIUM')}" class="btn btn-warning btn-full">Jouer</a>
+            </div>
+
+            <div class="level-card hard">
+                <div class="level-icon">
+                    <img th:src="@{/images/card_10.svg}" alt="Difficile" width="64" height="64">
+                    <img th:src="@{/images/card_11.svg}" alt="Difficile" width="64" height="64">
+                </div>
+                <h3>Difficile</h3>
+                <p>6×6 — 18 paires</p>
+                <p class="level-detail">Le vrai défi !</p>
+                <a th:href="@{/game/new(level='HARD')}" class="btn btn-danger btn-full">Jouer</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="home-bottom">
+
+        <!-- Saved Games -->
+        <section class="section flex-1">
+            <h2 class="section-title">Parties Sauvegardées</h2>
+            <div th:if="${savedGames.empty}" class="empty-state">
+                <p>Aucune partie sauvegardée.</p>
+                <p>Commencez une partie et sauvegardez-la !</p>
+            </div>
+            <div th:if="${!savedGames.empty}" class="saved-list">
+                <div th:each="save : ${savedGames}" class="saved-item">
+                    <div class="saved-info">
+                        <span class="badge" th:classappend="${save.level == 'EASY'} ? ' badge-success' : (${save.level == 'MEDIUM'} ? ' badge-warning' : ' badge-danger')"
+                              th:text="${save.level}"></span>
+                        <span>Score : <strong th:text="${save.score}"></strong></span>
+                        <span>Coups : <strong th:text="${save.moves}"></strong></span>
+                        <span class="saved-date" th:text="${save.formattedDate}"></span>
+                    </div>
+                    <div class="saved-actions">
+                        <a th:href="@{/game/load/{id}(id=${save.id})}" class="btn btn-primary btn-sm">Reprendre</a>
+                        <form th:action="@{/game/delete/{id}(id=${save.id})}" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Supprimer cette sauvegarde ?')">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Scores -->
+        <section class="section leaderboard-mini">
+            <h2 class="section-title">Top Scores</h2>
+            <div th:if="${topScores.empty}" class="empty-state">
+                <p>Pas encore de scores.</p>
+            </div>
+            <table th:if="${!topScores.empty}" class="score-table">
+                <thead>
+                    <tr><th>#</th><th>Joueur</th><th>Score</th><th>Niveau</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p, stat : ${topScores}"
+                        th:classappend="${p.username == player.username} ? ' highlight' : ''">
+                        <td th:text="${stat.count}"></td>
+                        <td th:text="${p.username}"></td>
+                        <td th:text="${p.bestScore}"></td>
+                        <td><span class="badge" th:text="${p.bestLevel}"
+                                  th:classappend="${p.bestLevel == 'EASY'} ? ' badge-success' : (${p.bestLevel == 'MEDIUM'} ? ' badge-warning' : ' badge-danger')"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align:center;margin-top:12px">
+                <a th:href="@{/scores}" class="btn btn-outline">Voir tout le classement</a>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+</body>
+</html>

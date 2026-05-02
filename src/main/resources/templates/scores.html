@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Classement - Jeu de Mémoire</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <img th:src="@{/images/card_back.svg}" alt="Logo" width="32" height="32">
+        <span>Jeu de Mémoire</span>
+    </div>
+    <div class="nav-links">
+        <span class="nav-user" th:text="${currentPlayer.username}"></span>
+        <a th:href="@{/home}" class="btn btn-outline">Accueil</a>
+        <a th:href="@{/logout}" class="btn btn-danger">Déconnexion</a>
+    </div>
+</nav>
+
+<div class="container">
+    <section class="section">
+        <h2 class="section-title">Classement des Meilleurs Joueurs</h2>
+
+        <div th:if="${players.empty}" class="empty-state">
+            <p>Aucun score enregistré pour l'instant.</p>
+            <p>Jouez une partie pour apparaître ici !</p>
+            <a th:href="@{/home}" class="btn btn-primary" style="margin-top:16px">Jouer</a>
+        </div>
+
+        <table th:if="${!players.empty}" class="score-table score-table-full">
+            <thead>
+                <tr>
+                    <th>Rang</th>
+                    <th>Joueur</th>
+                    <th>Meilleur Score</th>
+                    <th>Niveau</th>
+                    <th>Médaille</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p, stat : ${players}"
+                    th:classappend="${p.username == currentPlayer.username} ? ' highlight' : ''">
+                    <td>
+                        <span th:if="${stat.count == 1}" style="font-size:1.5rem">🥇</span>
+                        <span th:if="${stat.count == 2}" style="font-size:1.5rem">🥈</span>
+                        <span th:if="${stat.count == 3}" style="font-size:1.5rem">🥉</span>
+                        <span th:if="${stat.count > 3}" th:text="'#' + ${stat.count}"></span>
+                    </td>
+                    <td>
+                        <strong th:text="${p.username}"></strong>
+                        <span th:if="${p.username == currentPlayer.username}" style="color:#a78bfa;margin-left:6px">(vous)</span>
+                    </td>
+                    <td><span class="score-highlight" th:text="${p.bestScore}"></span></td>
+                    <td>
+                        <span class="badge"
+                              th:text="${p.bestLevel}"
+                              th:classappend="${p.bestLevel == 'EASY'} ? ' badge-success' : (${p.bestLevel == 'MEDIUM'} ? ' badge-warning' : ' badge-danger')"></span>
+                    </td>
+                    <td>
+                        <span th:if="${p.bestScore >= 800}">⭐⭐⭐</span>
+                        <span th:if="${p.bestScore >= 500 and p.bestScore < 800}">⭐⭐</span>
+                        <span th:if="${p.bestScore > 0 and p.bestScore < 500}">⭐</span>
+                        <span th:if="${p.bestScore == 0}">-</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="text-align:center;margin-top:24px">
+            <a th:href="@{/home}" class="btn btn-primary">Retour à l'accueil</a>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
